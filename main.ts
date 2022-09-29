@@ -3,20 +3,28 @@ namespace SpriteKind {
     export const rocketengine = SpriteKind.create()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    mySprite.ay = -25
+    ship.ay = 25 * Math.sin(angle)
+    ship.ax = 25 * Math.cos(angle)
+})
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    angle += 15 * (3.141592653589793 / 180)
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    angle += -15 * (3.141592653589793 / 180)
 })
 controller.A.onEvent(ControllerButtonEvent.Released, function () {
-    mySprite.ay = 20
+    ship.ay = 20
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.floorLight2, function (sprite, location) {
-    mySprite.setVelocity(0, -1)
+    ship.setVelocity(0, -1)
 })
-let mySprite: Sprite = null
+let ship: Sprite = null
 let angle = 0
+angle = 0
 scene.setBackgroundColor(9)
 tiles.setCurrentTilemap(tilemap`level1`)
 effects.clouds.startScreenEffect()
-mySprite = sprites.create(img`
+ship = sprites.create(img`
     . . . . . . . . . . . . . . . 
     . . . . . . . 1 . . . . . . . 
     . . . . . . 1 f 1 . . . . . . 
@@ -34,21 +42,20 @@ mySprite = sprites.create(img`
     . . . 1 . . . . . . . 1 . . . 
     . . . . . . . . . . . . . . . 
     `, SpriteKind.Player)
-let mySprite3 = sprites.create(img`
-    7 3 7 
-    3 7 3 
-    7 3 7 
+let engine = sprites.create(img`
+    3 7 
+    7 3 
     `, SpriteKind.rocketengine)
-scene.cameraFollowSprite(mySprite)
-scaling.scaleByPercent(mySprite, -5, ScaleDirection.Uniformly, ScaleAnchor.Middle)
-mySprite.ay = 20
+scene.cameraFollowSprite(ship)
+scaling.scaleByPercent(ship, -5, ScaleDirection.Uniformly, ScaleAnchor.Middle)
+ship.ay = 20
 let myMinimap = minimap.minimap(MinimapScale.Eighth, 2, 0)
-let mySprite2 = sprites.create(minimap.getImage(myMinimap), SpriteKind.map)
+let minimap2 = sprites.create(minimap.getImage(myMinimap), SpriteKind.map)
 game.onUpdate(function () {
-    mySprite2.destroy()
+    minimap2.destroy()
     myMinimap = minimap.minimap(MinimapScale.Eighth, 2, 0)
-    minimap.includeSprite(myMinimap, mySprite, MinimapSpriteScale.MinimapScale)
-    mySprite2 = sprites.create(minimap.getImage(myMinimap), SpriteKind.map)
-    mySprite2.setPosition(mySprite.left, mySprite.top)
-    mySprite3.setPosition(mySprite.x, mySprite.y)
+    minimap.includeSprite(myMinimap, ship, MinimapSpriteScale.MinimapScale)
+    minimap2 = sprites.create(minimap.getImage(myMinimap), SpriteKind.map)
+    minimap2.setPosition(ship.x - 50, ship.y - 35)
+    engine.setPosition(ship.x + -8 * Math.cos(angle), ship.y + -8 * Math.sin(angle))
 })
